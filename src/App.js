@@ -6,10 +6,7 @@ import lottery from './lottery'
 import web3 from './web3';
 
 class App extends React.Component {
-  // constructor(props) {
-  //   super(props)
-  //   this.state = { manager: '' }
-  // }
+
   state = {
     manager: '',
     players: [],
@@ -26,6 +23,19 @@ class App extends React.Component {
     this.setState({ manager, players, balance })
 
   }
+
+   onSubmit = async (event) => {
+    event.preventDefault()
+
+    const accounts = await web3.eth.getAccounts()
+
+    await lottery.methods.enter().send({ 
+      from: accounts[0], 
+      value: web3.utils.toWei(this.state.value, 'ether') 
+    })
+
+  }
+
   render() {
    
     return (
@@ -39,7 +49,7 @@ class App extends React.Component {
          {web3.utils.fromWei(this.state.balance, 'ether')} Ether!
       </p>
       <hr />
-      <form action="">
+      <form onSubmit={this.onSubmit} action="">
         <h4>Want to try your luck?</h4>
           <div>
             <label htmlFor="">Amount of Ether to enter</label>
