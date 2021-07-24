@@ -12,6 +12,7 @@ class App extends React.Component {
     players: [],
     balance: '',
     value: '',
+    message: ''
 
   }
 
@@ -29,10 +30,24 @@ class App extends React.Component {
 
     const accounts = await web3.eth.getAccounts()
 
+    this.setState({ message: 'Waiting on transaction success...' })
+
     await lottery.methods.enter().send({ 
       from: accounts[0], 
       value: web3.utils.toWei(this.state.value, 'ether') 
     })
+
+    this.setState({ message: 'You have been entered!' })
+  }
+
+  onClick = async () => {
+    const accounts = await web3.eth.getAccounts()
+    this.setState({ message: 'Waiting on transaction success...' })
+
+    await lottery.methods.pickWinner().send({
+      from: accounts[0]
+    })
+    this.setState({ message: 'A winner has been picked!' })
 
   }
 
@@ -57,6 +72,11 @@ class App extends React.Component {
           </div>
           <button>Enter</button>
       </form>
+      <hr />
+      <h1>{this.state.message}</h1>
+      <hr />
+      <h4>Ready to pick a winner?</h4>
+      <button onClick={this.onClick} >Pick a winner!</button>
      </div>
     );
   }
